@@ -1,0 +1,17 @@
+def selection_sort(A):
+    # Move through each position in the list
+    for i in range(0, len(A) - 1):
+
+        # Assume the current position has the smallest value
+        min_index = i
+
+        # Search the unsorted portion of the list
+        for j in range(i + 1, len(A)):
+
+            # Update min_index if a smaller value is found
+            if A[j] < A[min_index]:
+                min_index = j
+
+        # Swap the smallest value into position i
+        if min_index != i:
+            A[i], A[min_index] = A[min_index], A[i]

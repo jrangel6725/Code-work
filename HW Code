@@ -375,3 +375,6 @@ if __name__ == "__main__":
         ["progressive", "hamburger", "hammer", "ahocorasick"],
         [[0, 4], [1, 2], [3, 5], [7, 7]]
     ))
+if __name__ == "__main__":
+    q2_2()
+    q3_2()

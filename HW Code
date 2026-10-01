@@ -1,17 +1,377 @@
-def selection_sort(A):
-    # Move through each position in the list
-    for i in range(0, len(A) - 1):
 
-        # Assume the current position has the smallest value
+from timeit import default_timer as timer
+import matplotlib.pyplot as plt
+
+
+# AI Tool Used: ChatGPT
+# Interaction: Used ChatGPT for explanations and implementation guidance.
+# Verification: Tested each function using the examples from the assignment
+# and checked that the outputs were correctly sorted or formatted.
+
+
+# ============================================================================
+# Q1. Selection sort and bubble sort
+# ============================================================================
+
+def selection_sort(input_list):
+    # Check each position in the list
+    for i in range(0, len(input_list) - 1):
+        # Assume the current position contains the smallest value
         min_index = i
 
-        # Search the unsorted portion of the list
-        for j in range(i + 1, len(A)):
-
-            # Update min_index if a smaller value is found
-            if A[j] < A[min_index]:
+        # Search the unsorted part of the list
+        for j in range(i + 1, len(input_list)):
+            if input_list[j] < input_list[min_index]:
                 min_index = j
 
         # Swap the smallest value into position i
         if min_index != i:
-            A[i], A[min_index] = A[min_index], A[i]
+            input_list[i], input_list[min_index] = \
+                input_list[min_index], input_list[i]
+
+    return input_list
+
+
+def bubble_sort(input_list):
+    # Repeat the comparison process for each position
+    for i in range(1, len(input_list)):
+        # Compare neighboring values from right to left
+        for j in range(len(input_list) - 1, i - 1, -1):
+            # Swap values if they are out of order
+            if input_list[j] < input_list[j - 1]:
+                input_list[j], input_list[j - 1] = \
+                    input_list[j - 1], input_list[j]
+
+    return input_list
+
+
+def q1_3():
+    '''
+    Selection sort and bubble sort both have a worst-case running time
+    of Θ(n^2). Both algorithms use nested loops, which result in
+    approximately n^2 comparisons.
+    '''
+    pass
+
+
+# ============================================================================
+# Q2. Insertion sort
+# ============================================================================
+
+def insertion_sort(input_list):
+    # Start with the second element
+    for i in range(1, len(input_list)):
+        # Store the value that needs to be inserted
+        key = input_list[i]
+        j = i - 1
+
+        # Shift larger values to the right
+        while j >= 0 and input_list[j] > key:
+            input_list[j + 1] = input_list[j]
+            j -= 1
+
+        # Insert key into its correct sorted position
+        input_list[j + 1] = key
+
+    return input_list
+
+
+def q2_2():
+    # Input sizes required by the assignment
+    size = [100, 1000, 2000, 3000, 4000, 5000]
+
+    # Generate random, ascending, and descending inputs
+    random_set, asc_set, dsc_set = [], [], []
+
+    for i in range(len(size)):
+        random_set.append(np.random.randint(0, 1000000, size[i]))
+        asc_set.append(np.arange(0, size[i]))
+        dsc_set.append(np.arange(size[i], 0, -1))
+
+    # Store running times for each type of input
+    elapsed_time_random = []
+    elapsed_time_asc = []
+    elapsed_time_dsc = []
+
+    # Measure random-input running times
+    for input_list in random_set:
+        start = timer()
+        insertion_sort(input_list.copy())
+        end = timer()
+        elapsed_time_random.append(end - start)
+
+    # Measure ascending-input running times
+    for input_list in asc_set:
+        start = timer()
+        insertion_sort(input_list.copy())
+        end = timer()
+        elapsed_time_asc.append(end - start)
+
+    # Measure descending-input running times
+    for input_list in dsc_set:
+        start = timer()
+        insertion_sort(input_list.copy())
+        end = timer()
+        elapsed_time_dsc.append(end - start)
+
+    # Plot the running-time results
+    plt.plot(size, elapsed_time_random, color='blue', label='Random input')
+    plt.plot(size, elapsed_time_asc, color='red', label='asc-case')
+    plt.plot(size, elapsed_time_dsc, color='green', label='dsc-case')
+    plt.title("Insertion Sort Running Time")
+    plt.xlabel("Input size")
+    plt.ylabel("Running time")
+    plt.grid(True)
+    plt.legend()
+    plt.savefig('q2_2.png')
+    plt.show()
+
+
+def q2_3():
+    '''
+    Ascending input has the best-case running time of Θ(n) because
+    the values are already in the correct order.
+
+    Random input has an average running time of Θ(n^2).
+
+    Descending input has the worst-case running time of Θ(n^2)
+    because every new value must be shifted through the sorted portion
+    of the list. Therefore, descending input should take the longest.
+    '''
+    pass
+
+
+# ============================================================================
+# Q3. Merge sort
+# ============================================================================
+
+def merge_sort(input_list):
+    # A list with zero or one element is already sorted
+    if len(input_list) <= 1:
+        return input_list
+
+    # Divide the list into two halves
+    middle = len(input_list) // 2
+    left = merge_sort(input_list[:middle])
+    right = merge_sort(input_list[middle:])
+
+    # Merge the two sorted halves
+    merged = []
+    left_index = 0
+    right_index = 0
+
+    while left_index < len(left) and right_index < len(right):
+        if left[left_index] <= right[right_index]:
+            merged.append(left[left_index])
+            left_index += 1
+        else:
+            merged.append(right[right_index])
+            right_index += 1
+
+    # Add remaining values from the left half
+    while left_index < len(left):
+        merged.append(left[left_index])
+        left_index += 1
+
+    # Add remaining values from the right half
+    while right_index < len(right):
+        merged.append(right[right_index])
+        right_index += 1
+
+    return merged
+
+
+def q3_2():
+    # Input sizes required by the assignment
+    size = [1000, 10000, 20000, 30000, 40000, 50000]
+
+    # Generate random, ascending, and descending inputs
+    random_set, asc_set, dsc_set = [], [], []
+
+    for i in range(len(size)):
+        random_set.append(np.random.randint(0, 1000000, size[i]))
+        asc_set.append(np.arange(0, size[i]))
+        dsc_set.append(np.arange(size[i], 0, -1))
+
+    # Store running times for each type of input
+    elapsed_time_random = []
+    elapsed_time_asc = []
+    elapsed_time_dsc = []
+
+    # Measure random-input running times
+    for input_list in random_set:
+        start = timer()
+        merge_sort(input_list.copy())
+        end = timer()
+        elapsed_time_random.append(end - start)
+
+    # Measure ascending-input running times
+    for input_list in asc_set:
+        start = timer()
+        merge_sort(input_list.copy())
+        end = timer()
+        elapsed_time_asc.append(end - start)
+
+    # Measure descending-input running times
+    for input_list in dsc_set:
+        start = timer()
+        merge_sort(input_list.copy())
+        end = timer()
+        elapsed_time_dsc.append(end - start)
+
+    # Plot the running-time results
+    plt.plot(size, elapsed_time_random, color='blue', label='Random input')
+    plt.plot(size, elapsed_time_asc, color='red', label='asc-case')
+    plt.plot(size, elapsed_time_dsc, color='green', label='dsc-case')
+    plt.title("Merge Sort Running Time")
+    plt.xlabel("Input size")
+    plt.ylabel("Running time")
+    plt.grid(True)
+    plt.legend()
+    plt.savefig("q3_2.png")
+    plt.show()
+
+
+def q3_3():
+    '''
+    Merge sort has a running time of Θ(n log n) for random, ascending,
+    and descending inputs. This is because merge sort divides and merges
+    the list regardless of the original order of the input.
+    '''
+    pass
+
+
+# ============================================================================
+# Q4. Largest anagram group
+# ============================================================================
+
+def sort_letters(word):
+    # Store each character in a list
+    letters = []
+
+    for character in word:
+        letters.append(character)
+
+    # Sort the characters using insertion sort
+    for i in range(1, len(letters)):
+        key = letters[i]
+        j = i - 1
+
+        while j >= 0 and letters[j] > key:
+            letters[j + 1] = letters[j]
+            j -= 1
+
+        letters[j + 1] = key
+
+    # Build a string from the sorted characters
+    result = ""
+
+    for character in letters:
+        result += character
+
+    return result
+
+
+def anagram(strs):
+    groups = {}
+
+    # Group words using their sorted letters as the key
+    for word in strs:
+        key = sort_letters(word)
+
+        if key not in groups:
+            groups[key] = []
+
+        groups[key].append(word)
+
+    # Find the group with the most anagrams
+    largest_group = []
+
+    for group in groups.values():
+        if len(group) > len(largest_group):
+            largest_group = group
+
+    return largest_group
+
+
+# ============================================================================
+# Q5. Reconstruct a sentence
+# ============================================================================
+
+def q5(sentence):
+    # Split the sentence into separate words
+    words = sentence.split()
+    word_pairs = []
+
+    # Separate each word from its numerical suffix
+    for word in words:
+        index = len(word) - 1
+
+        # Move backward while finding the number
+        while index >= 0 and word[index].isdigit():
+            index -= 1
+
+        text = word[:index + 1]
+        position = int(word[index + 1:])
+
+        word_pairs.append([position, text])
+
+    # Sort the words by their numerical positions
+    for i in range(1, len(word_pairs)):
+        key = word_pairs[i]
+        j = i - 1
+
+        while j >= 0 and word_pairs[j][0] > key[0]:
+            word_pairs[j + 1] = word_pairs[j]
+            j -= 1
+
+        word_pairs[j + 1] = key
+
+    # Rebuild the sentence in the correct order
+    result = ""
+
+    for i in range(len(word_pairs)):
+        if i > 0:
+            result += " "
+
+        result += word_pairs[i][1]
+
+    return result
+
+
+# ============================================================================
+# Q6. Extract and concatenate substrings
+# ============================================================================
+
+def q6(strings, parts):
+    result = ""
+
+    # Process each string and its corresponding indexes
+    for i in range(len(strings)):
+        start = parts[i][0]
+        end = parts[i][1]
+
+        # The assignment example treats the ending index as inclusive
+        for j in range(start, end + 1):
+            result += strings[i][j]
+
+    return result
+
+
+# ============================================================================
+# Main - Test Section
+# ============================================================================
+
+if __name__ == "__main__":
+    print(selection_sort([5, 2, 4, 1, 3]))
+    print(bubble_sort([5, 2, 4, 1, 3]))
+    print(insertion_sort([5, 2, 4, 1, 3]))
+    print(merge_sort([5, 2, 4, 1, 3]))
+
+    print(anagram(["eat", "tea", "tan", "ate", "nat", "bat"]))
+    print(q5("sentence4 a3 is2 This1"))
+
+    print(q6(
+        ["progressive", "hamburger", "hammer", "ahocorasick"],
+        [[0, 4], [1, 2], [3, 5], [7, 7]]
+    ))
